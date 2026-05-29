@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/admin";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Park, EmergencyVet, AdCreative } from "@/app/data";
 import { generateNearby, defaultReviews } from "@/app/data";
 
@@ -216,4 +217,26 @@ export function getDashboardData() {
       { when: "3 hr ago", action: "Phone call", source: "Cherry Creek State Park" },
     ],
   };
+}
+
+// ── Saved parks (auth-aware) ────────────────────────────────────────────────
+
+export async function getSavedParkSlugs(userId: string): Promise<string[]> {
+  const supabase = await createServerClient();
+  const { data } = await supabase
+    .from("saved_parks")
+    .select("park_slug")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return (data || []).map((r) => r.park_slug);
+}
+
+export async function getProfile(userId: string) {
+  const supabase = await createServerClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+  return data;
 }
