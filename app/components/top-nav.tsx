@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppState } from "./providers";
 import { Wordmark } from "./sniff-mark";
+import UserMenu from "./user-menu";
 
 const NAV_ITEMS: { href: string; key: string; label: (n?: number) => string }[] = [
   { href: "/", key: "/", label: () => "Browse" },
@@ -35,7 +36,7 @@ export default function TopNav() {
         </nav>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <Link href="/business" className="btn-ghost">For Businesses</Link>
-          <Link href="/dashboard" className="btn-primary">Dashboard</Link>
+          <UserMenu />
         </div>
       </div>
     </header>
