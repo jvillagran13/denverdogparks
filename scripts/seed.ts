@@ -27,15 +27,12 @@ async function main() {
   // ── Cleanup tables that use insert (not upsert) ──────────────────────────
   console.log("Cleaning up insertable tables...");
 
-  const cleanupTables = ["ad_creatives", "reviews", "nearby_resources"];
+  const cleanupTables = ["ad_creatives", "reviews", "nearby_resources", "emergency_vets"];
   for (const table of cleanupTables) {
-    const { error } = await supabase.from(table).delete().neq("id", 0);
+    const { error } = await supabase.from(table).delete().gte("created_at", "1970-01-01");
     if (error) {
-      // Try alternative: delete with a always-true condition
-      const { error: err2 } = await supabase
-        .from(table)
-        .delete()
-        .gte("id", 0);
+      // emergency_vets has no created_at, use id
+      const { error: err2 } = await supabase.from(table).delete().neq("id", "00000000-0000-0000-0000-000000000000");
       if (err2) {
         console.error(`Failed to clean ${table}:`, err2.message);
         process.exit(1);
@@ -178,7 +175,7 @@ async function main() {
 
   const { error: vetsError } = await supabase
     .from("emergency_vets")
-    .upsert(vetRows, { onConflict: "name" });
+    .insert(vetRows);
   if (vetsError) {
     console.error("Emergency vets error:", vetsError.message);
     process.exit(1);
