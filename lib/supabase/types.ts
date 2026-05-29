@@ -7,8 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -225,6 +223,30 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          role?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           body: string
@@ -263,6 +285,42 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "parks"
             referencedColumns: ["slug"]
+          },
+        ]
+      }
+      saved_parks: {
+        Row: {
+          created_at: string
+          id: string
+          park_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          park_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          park_slug?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_parks_park_slug_fkey"
+            columns: ["park_slug"]
+            isOneToOne: false
+            referencedRelation: "parks"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "saved_parks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
